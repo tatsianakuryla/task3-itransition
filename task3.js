@@ -17,6 +17,8 @@ function isNatural(a) {
 function getLeastCommonMultiple(a, b) {
     if (!isNatural(a) || !isNatural(b)) return `NaN`;
     if (a === 0 && b === 0) return String(0);
+    if (a === 0) return String(b);
+    if (b === 0) return String(a);
     return String(a * b / getGreatestCommonDivisor(a,  b));
 }
 

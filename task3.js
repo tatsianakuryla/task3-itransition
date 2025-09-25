@@ -4,22 +4,19 @@ import { URL } from 'url';
 const EMAIL = 'tatianakuryla_gmail_com';
 
 function getGreatestCommonDivisor(a, b) {
-    if (b === 0) {
-        return a;
-    }
-    return getGreatestCommonDivisor(b, a % b);
+    return b === 0n ? a : getGreatestCommonDivisor(b, a % b);
 }
 
 function isNatural(a) {
-    return !(a < 0) && Number.isInteger(a);
+    return typeof a === 'bigint' && a >= 0n;
 }
 
 function getLeastCommonMultiple(a, b) {
     if (!isNatural(a) || !isNatural(b)) return `NaN`;
-    if (a === 0 && b === 0) return String(0);
-    if (a === 0) return String(b);
-    if (b === 0) return String(a);
-    return String(a * b / getGreatestCommonDivisor(a,  b));
+    if (a === 0n && b === 0n) return '0';
+    if (a === 0n) return String(b);
+    if (b === 0n) return String(a);
+    return String((a / getGreatestCommonDivisor(a,  b)) * b);
 }
 
 const server = http.createServer((request, response) => {
@@ -37,10 +34,14 @@ const server = http.createServer((request, response) => {
         response.end('NaN');
         return;
     }
-    const x = Number(xParam);
-    const y = Number(yParam);
 
-    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+    let x;
+    let y;
+
+    try {
+        x = BigInt(xParam);
+        y = BigInt(yParam);
+    } catch {
         response.setHeader('Content-Type', 'text/plain; charset=utf-8');
         response.end('NaN');
         return;
